@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference mDataBase;
     MyAdapter myAdapter;
     ArrayList<UserData> list;
-    private final String USER_KEY = "UserData";
+    private final String USER_KEY = "User";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
