@@ -6,10 +6,13 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -38,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
 
     TextView textViewFeedBack;
 
+    SwipeRefreshLayout swipeRefreshLayout;
+
+    Intent intent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         init();
 
         mDataBase.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -52,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
                     UserData userData = dataSnapshot.getValue(UserData.class);
                     list.add(userData);
+
                 }
                 myAdapter.notifyDataSetChanged();
             }
@@ -62,11 +71,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                finish();
+                startActivity(intent);
+                overridePendingTransition(0,0);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
         if (nightMODE) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            }
         }
 
         textViewFeedBack.setOnClickListener(new View.OnClickListener() {
@@ -100,5 +121,9 @@ public class MainActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
         nightMODE = sharedPreferences.getBoolean("night", false);
+
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+
+        intent = new Intent(this, MainActivity.class);
     }
 }
