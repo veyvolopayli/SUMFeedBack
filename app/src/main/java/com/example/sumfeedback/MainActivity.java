@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
     Intent intent;
 
+    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if (list.size() > 0)
+                    list.clear();
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
